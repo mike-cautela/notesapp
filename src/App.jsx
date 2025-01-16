@@ -26,26 +26,38 @@ const mockUsers = [
 
 /**
  * Example menu data taken from your Menu.json.
- * Again, in a real app you'd fetch this data from a C# Web API.
+ * In a real app, you'd fetch this data from a C# Web API or similar.
  */
 const mockMenu = [
-  {
-    id: 1,
-    name: "Chipotle Chicken Avocado Melt",
-    price: 8.99,
-  },
-  {
-    id: 2,
-    name: "Mediterranean Veggie Sandwich",
-    price: 7.59,
-  },
-  {
-    id: 3,
-    name: "Broccoli Cheddar Soup",
-    price: 5.99,
-  },
-  // ... you can paste the rest of your menu items here
+  { id: 1, name: "Chipotle Chicken Avocado Melt", price: 8.99 },
+  { id: 2, name: "Mediterranean Veggie Sandwich", price: 7.59 },
+  { id: 3, name: "Broccoli Cheddar Soup", price: 5.99 },
+  { id: 4, name: "Fuji Apple Salad with Chicken", price: 8.59 },
+  { id: 5, name: "Ten Vegetable Soup", price: 4.99 },
+  // ... Paste the rest of your items here or fetch them dynamically
 ];
+
+/**
+ * Returns an emoji (or multiple) based on keywords found in the menu item's name.
+ * Feel free to customize or expand this logic.
+ */
+function getEmojiForMenuItem(name) {
+  const lowerName = name.toLowerCase();
+  if (lowerName.includes("chicken")) return "🍗";
+  if (lowerName.includes("avocado")) return "🥑";
+  if (lowerName.includes("veggie") || lowerName.includes("vegetable")) return "🥕";
+  if (lowerName.includes("soup")) return "🥣";
+  if (lowerName.includes("salad")) return "🥗";
+  if (lowerName.includes("bagel")) return "🥯";
+  if (lowerName.includes("muffin")) return "🧁";
+  if (lowerName.includes("cookie")) return "🍪";
+  if (lowerName.includes("mac") || lowerName.includes("cheese")) return "🧀";
+  if (lowerName.includes("bread") || lowerName.includes("sandwich")) return "🥪";
+  if (lowerName.includes("apple")) return "🍎";
+  if (lowerName.includes("bbq")) return "🔥";
+  // Default fallback
+  return "🍽️";
+}
 
 function App() {
   // State for tracking user login
@@ -115,9 +127,9 @@ function App() {
 
       {!loggedIn && (
         <div style={styles.loginContainer}>
-          <h2>Login</h2>
+          <h2 style={{ color: styles.headingColor }}>Login</h2>
           <form onSubmit={handleLogin} style={styles.form}>
-            <label>Username</label>
+            <label style={styles.label}>Username</label>
             <input
               style={styles.input}
               type="text"
@@ -125,7 +137,7 @@ function App() {
               onChange={(e) => setUsername(e.target.value)}
             />
 
-            <label>Password</label>
+            <label style={styles.label}>Password</label>
             <input
               style={styles.input}
               type="password"
@@ -143,7 +155,9 @@ function App() {
 
       {loggedIn && currentUser && (
         <div style={styles.dashboard}>
-          <h2>Welcome, {currentUser.username}!</h2>
+          <h2 style={{ color: styles.headingColor }}>
+            Welcome, {currentUser.username}!
+          </h2>
           <div style={styles.navBar}>
             <button style={styles.button} onClick={handleShowMenu}>
               View Menu
@@ -163,21 +177,23 @@ function App() {
 
       {loggedIn && showMenu && (
         <div style={styles.section}>
-          <h3>Menu Items</h3>
+          <h3 style={{ color: styles.headingColor }}>Menu Items</h3>
           <table style={styles.table}>
             <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price ($)</th>
+              <tr style={{ backgroundColor: "#c1dbb3" }}>
+                <th style={styles.th}>ID</th>
+                <th style={styles.th}>Name</th>
+                <th style={styles.th}>Price ($)</th>
               </tr>
             </thead>
             <tbody>
               {menuItems.map((item) => (
                 <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.name}</td>
-                  <td>{item.price.toFixed(2)}</td>
+                  <td style={styles.td}>{item.id}</td>
+                  <td style={styles.td}>
+                    {getEmojiForMenuItem(item.name)} {item.name}
+                  </td>
+                  <td style={styles.td}>{item.price.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -187,25 +203,25 @@ function App() {
 
       {loggedIn && showUsers && (
         <div style={styles.section}>
-          <h3>All Users</h3>
+          <h3 style={{ color: styles.headingColor }}>All Users</h3>
           {mockUsers.map((u) => (
             <div key={u.username} style={styles.userCard}>
-              <p>
+              <p style={styles.userText}>
                 <strong>Username:</strong> {u.username}
               </p>
-              <p>
+              <p style={styles.userText}>
                 <strong>Orders:</strong>
               </p>
               {u.orders && u.orders.length > 0 ? (
                 <ul>
                   {u.orders.map((order) => (
-                    <li key={order.orderId}>
+                    <li key={order.orderId} style={styles.userText}>
                       Order ID: {order.orderId}, Date: {order.date}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p>No orders found</p>
+                <p style={styles.userText}>No orders found</p>
               )}
             </div>
           ))}
@@ -216,38 +232,56 @@ function App() {
 }
 
 // ---- STYLES ----
+// Adjust these colors/values as needed for a Panera-inspired green theme
 const styles = {
   app: {
-    fontFamily: "Arial, sans-serif",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    backgroundColor: "#e9f5e9", // Pale green background
+    color: "#2d2d2d", // Dark gray text for readability
+    minHeight: "100vh",
     padding: "1rem",
     textAlign: "center",
   },
+  headingColor: "#435e43", // A deeper green for headings
   title: {
     marginBottom: "2rem",
+    color: "#2f4f2f",
   },
   loginContainer: {
     width: "300px",
     margin: "0 auto",
     padding: "1rem",
-    border: "1px solid #ccc",
+    border: "1px solid #b2d8ac",
     borderRadius: "0.5rem",
+    backgroundColor: "#ffffff",
     textAlign: "left",
   },
   form: {
     display: "flex",
     flexDirection: "column",
   },
+  label: {
+    marginBottom: "0.2rem",
+  },
   input: {
     marginBottom: "0.5rem",
     padding: "0.5rem",
+    border: "1px solid #b2d8ac",
+    borderRadius: "0.25rem",
   },
   button: {
     margin: "0.5rem",
     padding: "0.5rem 1rem",
     cursor: "pointer",
+    backgroundColor: "#b2d8ac", // Light green button
+    border: "none",
+    borderRadius: "0.25rem",
+    color: "#2d2d2d",
+    fontWeight: "bold",
   },
   error: {
     color: "red",
+    marginTop: "0.5rem",
   },
   dashboard: {
     margin: "1rem auto",
@@ -260,26 +294,45 @@ const styles = {
     justifyContent: "center",
     flexWrap: "wrap",
     gap: "1rem",
+    marginTop: "1rem",
   },
   section: {
     width: "80%",
     maxWidth: "600px",
     margin: "1rem auto",
     textAlign: "left",
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#ffffff",
     padding: "1rem",
     borderRadius: "0.5rem",
+    border: "1px solid #b2d8ac",
   },
   table: {
     width: "100%",
     borderCollapse: "collapse",
+    backgroundColor: "#fefefe",
+  },
+  th: {
+    padding: "0.5rem",
+    border: "1px solid #b2d8ac",
+    textAlign: "left",
+    color: "#2f4f2f",
+  },
+  td: {
+    padding: "0.5rem",
+    border: "1px solid #b2d8ac",
+    color: "#2d2d2d",
   },
   userCard: {
     marginBottom: "1rem",
-    border: "1px solid #ccc",
+    border: "1px solid #b2d8ac",
     borderRadius: "0.3rem",
     padding: "0.5rem",
     textAlign: "left",
+    backgroundColor: "#fefefe",
+  },
+  userText: {
+    margin: "0.2rem 0",
+    color: "#2d2d2d",
   },
 };
 
